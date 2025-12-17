@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. LOGIKA DARK MODE (Sama seperti sebelumnya) ---
+    // --- 1. LOGIKA DARK MODE ---
     const themeBtn = document.getElementById('theme-toggle');
     const currentTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -30,20 +30,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 2. LOGIKA BAHASA (TOGGLE ID <-> EN) ---
     const langBtn = document.getElementById('lang-toggle');
     
-    // Fungsi untuk mengubah nilai Google Translate
+    // Fungsi pemicu yang lebih kuat (Perbaikan 1)
     function triggerGoogleTranslate(langCode) {
-        // Cari elemen select tersembunyi milik Google
         const googleSelect = document.querySelector('.goog-te-combo');
-        
         if (googleSelect) {
             googleSelect.value = langCode;
-            googleSelect.dispatchEvent(new Event('change')); // Trigger event change
+            // Google butuh kedua event ini agar sadar ada perubahan
+            googleSelect.dispatchEvent(new Event('change')); 
+            googleSelect.dispatchEvent(new Event('input')); 
         }
     }
 
-    // Cek status bahasa saat load (mendeteksi cookie Google)
+    // Cek status saat load
     function checkCurrentLanguage() {
         const googleSelect = document.querySelector('.goog-te-combo');
+        // Jika value 'en', artinya sedang diterjemahkan ke Inggris
         if (googleSelect && googleSelect.value === 'en') {
             document.body.setAttribute('data-lang', 'en');
             langBtn.setAttribute('aria-label', 'Ganti ke Bahasa Indonesia');
@@ -58,20 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentLang = document.body.getAttribute('data-lang');
         
         if (currentLang === 'en') {
-            // Jika Inggris, ubah ke Indonesia
-            triggerGoogleTranslate('id'); // 'id' atau kosong '' untuk default
+            // Balik ke Indo (Perbaikan 2: Gunakan string kosong '' untuk reset)
+            triggerGoogleTranslate(''); 
             document.body.setAttribute('data-lang', 'id');
             langBtn.setAttribute('aria-label', 'Switch to English');
         } else {
-            // Jika Indonesia, ubah ke Inggris
+            // Ubah ke Inggris
             triggerGoogleTranslate('en');
             document.body.setAttribute('data-lang', 'en');
             langBtn.setAttribute('aria-label', 'Ganti ke Bahasa Indonesia');
         }
     });
 
-    // Karena Google Translate load-nya agak lambat (async),
-    // kita perlu cek berulang kali di awal apakah widget sudah siap
+    // Cek berkala apakah widget Google sudah siap (Polling)
+    // Dipercepat ke 300ms agar tombol cepat responsif
     const checkInterval = setInterval(() => {
         const googleSelect = document.querySelector('.goog-te-combo');
         if (googleSelect) {
@@ -80,5 +81,5 @@ document.addEventListener('DOMContentLoaded', () => {
             googleSelect.addEventListener('change', checkCurrentLanguage);
             clearInterval(checkInterval); // Stop checking
         }
-    }, 500); // Cek setiap 0.5 detik
+    }, 300);
 });
