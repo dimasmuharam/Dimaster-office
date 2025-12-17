@@ -32,6 +32,9 @@ body {
     color: var(--text-main);
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
+    /* Fix posisi body agar tidak turun oleh topbar Google */
+    top: 0px !important; 
+    position: static !important;
 }
 
 /* Accessibility Focus Ring (Penting untuk Navigasi Keyboard) */
@@ -189,28 +192,32 @@ body[data-lang="en"] .lang-id { display: none; }
 body[data-lang="en"] .lang-en { display: flex; align-items: center; gap: 5px; }
 
 
-/* --- GOOGLE TRANSLATE FIX (PENTING) --- */
+/* --- GOOGLE TRANSLATE FIX (SOLUSI NUKLIR - FINAL) --- */
 
-/* 1. Menyembunyikan widget tanpa mematikan fungsinya */
-/* Kita geser keluar layar (-9999px) alih-alih display:none */
-#google_translate_element {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
+/* 1. Sembunyikan Widget Asli Google, Banner, dan Tooltip Mengganggu */
+/* Kita geser keluar layar dan bikin transparan agar tidak bisa diklik */
+#google_translate_element, 
+.goog-te-banner-frame, 
+.skiptranslate {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+    height: 1px !important;
+    width: 1px !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
-/* 2. Menghilangkan Top Bar Google yang mengganggu layout */
-.goog-te-banner-frame { 
-    display: none !important; 
+/* 2. Sembunyikan Teks "Powered by Google" jika muncul */
+.goog-logo-link {
+    display: none !important;
 }
-body { 
-    top: 0px !important; 
+.goog-te-gadget {
+    color: transparent !important;
 }
 
-/* 3. Mencegah font berubah aneh saat diterjemahkan */
+/* 3. Mencegah font berubah aneh/background highlight saat diterjemahkan */
 font {
     background-color: transparent !important;
     box-shadow: none !important;
