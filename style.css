@@ -76,30 +76,6 @@ body {
     font-size: 0.85rem; color: var(--text-main); display: block;
 }
 
-/* --- BUTTONS & TOOLS --- */
-.icon-btn {
-    background: transparent; border: 2px solid var(--border-color);
-    color: var(--text-heading); cursor: pointer; padding: 8px 12px;
-    border-radius: 6px; font-size: 1.2rem; display: inline-flex; align-items: center;
-    transition: all 0.2s;
-}
-.icon-btn:hover { background-color: var(--border-color); }
-
-/* Tombol Dark Mode Logic */
-.icon-moon { display: none; }
-[data-theme="dark"] .icon-sun { display: none; }
-[data-theme="dark"] .icon-moon { display: inline-block; }
-
-/* Translate Box Custom */
-.translate-box {
-    display: none; /* JS will toggle this */
-    position: absolute; top: 70px; right: 20px;
-    background: var(--bg-card); padding: 10px;
-    border: 1px solid var(--border-color); border-radius: 8px;
-    box-shadow: var(--shadow);
-}
-.translate-box.active { display: block; }
-
 /* --- HERO & SECTIONS --- */
 .hero {
     padding: 4rem 0; text-align: center;
@@ -152,14 +128,17 @@ section { padding: 3rem 0; }
     .header-inner { flex-direction: column; text-align: center; }
     .hero h2 { font-size: 1.8rem; }
 }
-/* Styling Container */
+
+/* --- ACCESSIBILITY TOOLS (NAVBAR) --- */
+
+/* Container Tombol */
 .access-tools {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-/* Styling Tombol Aksesibilitas */
+/* Styling Tombol Aksesibilitas (Lang & Theme) */
 .access-btn {
     background: transparent;
     border: 2px solid var(--border-color); /* Batas tegas untuk High Contrast */
@@ -199,44 +178,7 @@ section { padding: 3rem 0; }
     color: #E2E8F0;
 }
 
-/* Styling Dropdown Bahasa (Google Translate) */
-.lang-wrapper {
-    position: relative;
-}
-
-.translate-dropdown {
-    display: none; /* Tersembunyi scr default */
-    position: absolute;
-    top: 120%;
-    right: 0;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
-    padding: 10px;
-    border-radius: 8px;
-    z-index: 100;
-    min-width: 160px;
-}
-
-.translate-dropdown.active {
-    display: block;
-    animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Membersihkan Tampilan Bawaan Google Translate yang Berantakan */
-.goog-te-gadget-simple {
-    background-color: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    font-size: 14px !important;
-}
-.goog-te-gadget img { display: none !important; } /* Sembunyikan logo Google */
-/* --- CSS TOMBOL TOGGLE BAHASA --- */
+/* --- LOGIKA TOMBOL BAHASA (Toggle ID/EN) --- */
 
 /* Default (Bahasa Indonesia): Sembunyikan tombol "ID", Tampilkan tombol "EN" */
 .lang-en { display: none; }
@@ -246,6 +188,30 @@ section { padding: 3rem 0; }
 body[data-lang="en"] .lang-id { display: none; }
 body[data-lang="en"] .lang-en { display: flex; align-items: center; gap: 5px; }
 
-/* Menghilangkan Top Bar Google Translate yang mengganggu */
-.goog-te-banner-frame { display: none !important; }
-body { top: 0px !important; }
+
+/* --- GOOGLE TRANSLATE FIX (PENTING) --- */
+
+/* 1. Menyembunyikan widget tanpa mematikan fungsinya */
+/* Kita geser keluar layar (-9999px) alih-alih display:none */
+#google_translate_element {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* 2. Menghilangkan Top Bar Google yang mengganggu layout */
+.goog-te-banner-frame { 
+    display: none !important; 
+}
+body { 
+    top: 0px !important; 
+}
+
+/* 3. Mencegah font berubah aneh saat diterjemahkan */
+font {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
