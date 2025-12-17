@@ -236,3 +236,16 @@ section { padding: 3rem 0; }
     font-size: 14px !important;
 }
 .goog-te-gadget img { display: none !important; } /* Sembunyikan logo Google */
+/* --- CSS TOMBOL TOGGLE BAHASA --- */
+
+/* Default (Bahasa Indonesia): Sembunyikan tombol "ID", Tampilkan tombol "EN" */
+.lang-en { display: none; }
+.lang-id { display: flex; align-items: center; gap: 5px; }
+
+/* Saat Bahasa Inggris Aktif: Sembunyikan "EN", Tampilkan "ID" */
+body[data-lang="en"] .lang-id { display: none; }
+body[data-lang="en"] .lang-en { display: flex; align-items: center; gap: 5px; }
+
+/* Menghilangkan Top Bar Google Translate yang mengganggu */
+.goog-te-banner-frame { display: none !important; }
+body { top: 0px !important; }
