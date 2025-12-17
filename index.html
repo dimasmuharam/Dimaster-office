@@ -34,19 +34,21 @@
 <nav class="site-nav" aria-label="Menu Aksesibilitas">
     <div class="access-tools">
         
-        <div class="lang-wrapper">
-            <button id="lang-toggle" 
-                    class="access-btn" 
-                    aria-label="Pilih Bahasa / Select Language" 
-                    aria-haspopup="true" 
-                    aria-expanded="false"
-                    aria-controls="google_translate_element">
-                <span class="icon" aria-hidden="true">🌐</span>
-                <span class="btn-text">ID/EN</span>
-            </button>
+        <div id="google_translate_element" style="display:none;"></div>
+
+        <button id="lang-toggle" 
+                class="access-btn" 
+                type="button"
+                aria-label="Switch to English">
             
-            <div id="google_translate_element" class="translate-dropdown" aria-hidden="true"></div>
-        </div>
+            <span class="lang-id" aria-hidden="true">
+                <span style="font-size: 1.2rem;">🇬🇧</span> EN
+            </span>
+
+            <span class="lang-en" aria-hidden="true">
+                <span style="font-size: 1.2rem;">🇮🇩</span> ID
+            </span>
+        </button>
 
         <button id="theme-toggle" 
                 class="access-btn" 
