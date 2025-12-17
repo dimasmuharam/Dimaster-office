@@ -37,7 +37,6 @@ body {
     position: static !important;
 }
 
-/* Accessibility Focus Ring (Penting untuk Navigasi Keyboard) */
 :focus-visible {
     outline: 3px solid var(--accent-blue);
     outline-offset: 2px;
@@ -126,98 +125,63 @@ section { padding: 3rem 0; }
     padding: 2rem 0; text-align: center; font-size: 0.9rem; margin-top: 3rem;
 }
 
-/* --- MOBILE RESPONSIVE --- */
 @media (max-width: 600px) {
     .header-inner { flex-direction: column; text-align: center; }
     .hero h2 { font-size: 1.8rem; }
 }
 
 /* --- ACCESSIBILITY TOOLS (NAVBAR) --- */
-
-/* Container Tombol */
 .access-tools {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex; align-items: center; gap: 10px;
 }
 
-/* Styling Tombol Aksesibilitas (Lang & Theme) */
 .access-btn {
     background: transparent;
-    border: 2px solid var(--border-color); /* Batas tegas untuk High Contrast */
+    border: 2px solid var(--border-color); 
     color: var(--text-heading);
     padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
+    display: inline-flex; align-items: center; justify-content: center;
     gap: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-weight: 600; font-size: 0.9rem;
     transition: all 0.2s ease;
-    position: relative;
+    min-width: 44px; /* Minimum touch target size */
 }
 
 .access-btn:hover {
     background-color: var(--border-color);
+    color: var(--primary-blue);
 }
 
-/* FOKUS AKSESIBILITAS (Penting!) */
 .access-btn:focus-visible {
     outline: 3px solid var(--accent-blue);
     outline-offset: 3px;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
 }
 
-/* Logika Ikon Dark Mode */
+/* Dark Mode Icons */
 .icon-sun { display: none; }
 .icon-moon { display: block; }
-
-/* Saat Dark Mode Aktif */
 [data-theme="dark"] .icon-sun { display: block; }
 [data-theme="dark"] .icon-moon { display: none; }
-[data-theme="dark"] .access-btn { 
-    border-color: #475569; 
-    color: #E2E8F0;
-}
+[data-theme="dark"] .access-btn { border-color: #475569; color: #E2E8F0; }
 
-/* --- LOGIKA TOMBOL BAHASA (Toggle ID/EN) --- */
+/* --- GOOGLE TRANSLATE HIDING (ADAPTASI DARI CONTOH) --- */
 
-/* Default (Bahasa Indonesia): Sembunyikan tombol "ID", Tampilkan tombol "EN" */
-.lang-en { display: none; }
-.lang-id { display: flex; align-items: center; gap: 5px; }
-
-/* Saat Bahasa Inggris Aktif: Sembunyikan "EN", Tampilkan "ID" */
-body[data-lang="en"] .lang-id { display: none; }
-body[data-lang="en"] .lang-en { display: flex; align-items: center; gap: 5px; }
-
-
-/* --- GOOGLE TRANSLATE FIX (SOLUSI NUKLIR - FINAL) --- */
-
-/* 1. Sembunyikan Widget Asli Google, Banner, dan Tooltip Mengganggu */
-/* Kita geser keluar layar dan bikin transparan agar tidak bisa diklik */
-#google_translate_element, 
-.goog-te-banner-frame, 
-.skiptranslate {
-    position: absolute !important;
-    top: -9999px !important;
-    left: -9999px !important;
-    height: 1px !important;
-    width: 1px !important;
-    overflow: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-/* 2. Sembunyikan Teks "Powered by Google" jika muncul */
-.goog-logo-link {
+/* 1. Sembunyikan elemen dropdown Google */
+#google_translate_element {
     display: none !important;
 }
-.goog-te-gadget {
-    color: transparent !important;
-}
 
-/* 3. Mencegah font berubah aneh/background highlight saat diterjemahkan */
+/* 2. Sembunyikan Top Bar Google yang mengganggu */
+.goog-te-banner-frame { display: none !important; }
+.goog-te-banner-frame.skiptranslate { display: none !important; }
+body { top: 0px !important; }
+
+/* 3. Sembunyikan tooltip Google saat hover text */
+#goog-gt-tt { display: none !important; }
+
+/* 4. Mencegah font berubah aneh/background highlight */
 font {
     background-color: transparent !important;
     box-shadow: none !important;
