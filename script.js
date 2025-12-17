@@ -1,85 +1,110 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. LOGIKA DARK MODE ---
+    // =========================================
+    // 1. LOGIKA DARK MODE 
+    // =========================================
     const themeBtn = document.getElementById('theme-toggle');
     const currentTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    if (currentTheme === 'dark' || (!currentTheme && systemPrefersDark)) {
-        document.body.setAttribute('data-theme', 'dark');
-        themeBtn.setAttribute('aria-pressed', 'true');
-        themeBtn.setAttribute('aria-label', 'Ubah ke Mode Terang');
+    // Fungsi update UI Button (Ikon Matahari/Bulan)
+    function updateThemeButton(theme) {
+        // Kita menggunakan CSS class untuk show/hide SVG, jadi cukup set atribut body
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            themeBtn.setAttribute('aria-pressed', 'true');
+            themeBtn.setAttribute('aria-label', 'Ubah ke Mode Terang');
+        } else {
+            document.body.setAttribute('data-theme', 'light');
+            themeBtn.setAttribute('aria-pressed', 'false');
+            themeBtn.setAttribute('aria-label', 'Ubah ke Mode Gelap');
+        }
     }
 
+    // Set awal
+    if (currentTheme === 'dark' || (!currentTheme && systemPrefersDark)) {
+        updateThemeButton('dark');
+    } else {
+        updateThemeButton('light');
+    }
+
+    // Event Klik
     themeBtn.addEventListener('click', () => {
         const isDark = document.body.getAttribute('data-theme') === 'dark';
         if (isDark) {
-            document.body.setAttribute('data-theme', 'light');
+            updateThemeButton('light');
             localStorage.setItem('theme', 'light');
-            themeBtn.setAttribute('aria-pressed', 'false');
-            themeBtn.setAttribute('aria-label', 'Ubah ke Mode Gelap');
         } else {
-            document.body.setAttribute('data-theme', 'dark');
+            updateThemeButton('dark');
             localStorage.setItem('theme', 'dark');
-            themeBtn.setAttribute('aria-pressed', 'true');
-            themeBtn.setAttribute('aria-label', 'Ubah ke Mode Terang');
         }
     });
 
 
-    // --- 2. LOGIKA BAHASA (TOGGLE ID <-> EN) ---
+    // =========================================
+    // 2. LOGIKA GANTI BAHASA (METODE COOKIE)
+    // =========================================
     const langBtn = document.getElementById('lang-toggle');
-    
-    // Fungsi pemicu yang lebih kuat (Perbaikan 1)
-    function triggerGoogleTranslate(langCode) {
-        const googleSelect = document.querySelector('.goog-te-combo');
-        if (googleSelect) {
-            googleSelect.value = langCode;
-            // Google butuh kedua event ini agar sadar ada perubahan
-            googleSelect.dispatchEvent(new Event('change')); 
-            googleSelect.dispatchEvent(new Event('input')); 
-        }
+    const langText = langBtn.querySelector('.lang-text') || langBtn; // Fallback jika span tidak ada
+
+    // Helper: Ambil Cookie
+    function getCookie(name) {
+        const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+        return v ? v[2] : null;
     }
 
-    // Cek status saat load
-    function checkCurrentLanguage() {
-        const googleSelect = document.querySelector('.goog-te-combo');
-        // Jika value 'en', artinya sedang diterjemahkan ke Inggris
-        if (googleSelect && googleSelect.value === 'en') {
-            document.body.setAttribute('data-lang', 'en');
-            langBtn.setAttribute('aria-label', 'Ganti ke Bahasa Indonesia');
-        } else {
-            document.body.setAttribute('data-lang', 'id');
-            langBtn.setAttribute('aria-label', 'Switch to English');
-        }
+    // Helper: Set Cookie Google
+    function setGoogleCookie(value) {
+        document.cookie = "googtrans=" + value + "; path=/; domain=" + document.domain;
+        document.cookie = "googtrans=" + value + "; path=/;";
     }
 
-    // Listener Tombol
+    // Cek Status Bahasa Saat Load
+    const currentGoogleCookie = getCookie('googtrans');
+
+    if (currentGoogleCookie && currentGoogleCookie.includes('/en')) {
+        // Sedang Bahasa Inggris
+        langText.textContent = 'EN'; 
+        langBtn.setAttribute('aria-label', 'Current Language: English. Click to switch to Indonesian');
+    } else {
+        // Sedang Bahasa Indonesia (Default)
+        langText.textContent = 'ID';
+        langBtn.setAttribute('aria-label', 'Bahasa saat ini Indonesia. Klik untuk ganti ke Inggris');
+    }
+
+    // Event Klik Tombol Bahasa
     langBtn.addEventListener('click', () => {
-        const currentLang = document.body.getAttribute('data-lang');
-        
-        if (currentLang === 'en') {
-            // Balik ke Indo (Perbaikan 2: Gunakan string kosong '' untuk reset)
-            triggerGoogleTranslate(''); 
-            document.body.setAttribute('data-lang', 'id');
-            langBtn.setAttribute('aria-label', 'Switch to English');
+        if (langText.textContent.includes('ID')) {
+            // Mau ganti ke Inggris
+            setGoogleCookie('/id/en'); 
+            location.reload(); // Wajib reload agar cookie terbaca Google
         } else {
-            // Ubah ke Inggris
-            triggerGoogleTranslate('en');
-            document.body.setAttribute('data-lang', 'en');
-            langBtn.setAttribute('aria-label', 'Ganti ke Bahasa Indonesia');
+            // Mau ganti ke Indonesia
+            setGoogleCookie('/id/id'); 
+            location.reload();
         }
     });
 
-    // Cek berkala apakah widget Google sudah siap (Polling)
-    // Dipercepat ke 300ms agar tombol cepat responsif
-    const checkInterval = setInterval(() => {
-        const googleSelect = document.querySelector('.goog-te-combo');
-        if (googleSelect) {
-            checkCurrentLanguage();
-            // Tambahkan listener jika user mengubah bahasa lewat cara lain (opsional)
-            googleSelect.addEventListener('change', checkCurrentLanguage);
-            clearInterval(checkInterval); // Stop checking
-        }
-    }, 300);
 });
+
+
+// =========================================
+// 3. GOOGLE TRANSLATE LOADER (EXTERNAL)
+// =========================================
+// Ini ditaruh di luar DOMContentLoaded agar langsung dieksekusi browser
+window.googleTranslateElementInit = function() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'id',
+        includedLanguages: 'en,id', // Hanya ID dan EN
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+    }, 'google_translate_element');
+};
+
+(function loadGoogleScript() {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    // Gunakan protokol https agar aman
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.body.appendChild(script);
+})();
