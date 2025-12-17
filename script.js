@@ -7,9 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    // Fungsi update UI Button (Ikon Matahari/Bulan)
+    // Fungsi update UI Button
     function updateThemeButton(theme) {
-        // Kita menggunakan CSS class untuk show/hide SVG, jadi cukup set atribut body
         if (theme === 'dark') {
             document.body.setAttribute('data-theme', 'dark');
             themeBtn.setAttribute('aria-pressed', 'true');
@@ -21,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Set awal
+    // Set kondisi awal
     if (currentTheme === 'dark' || (!currentTheme && systemPrefersDark)) {
         updateThemeButton('dark');
     } else {
@@ -42,10 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================
-    // 2. LOGIKA GANTI BAHASA (METODE COOKIE)
+    // 2. LOGIKA BAHASA (COOKIE METHOD)
     // =========================================
     const langBtn = document.getElementById('lang-toggle');
-    const langText = langBtn.querySelector('.lang-text') || langBtn; // Fallback jika span tidak ada
+    const langText = langBtn.querySelector('.lang-text') || langBtn;
 
     // Helper: Ambil Cookie
     function getCookie(name) {
@@ -59,31 +58,40 @@ document.addEventListener('DOMContentLoaded', () => {
         document.cookie = "googtrans=" + value + "; path=/;";
     }
 
-    // Cek Status Bahasa Saat Load
+    // A. Cek Status Bahasa Saat Load (Untuk Label Tombol)
     const currentGoogleCookie = getCookie('googtrans');
-
     if (currentGoogleCookie && currentGoogleCookie.includes('/en')) {
-        // Sedang Bahasa Inggris
         langText.textContent = 'EN'; 
         langBtn.setAttribute('aria-label', 'Current Language: English. Click to switch to Indonesian');
     } else {
-        // Sedang Bahasa Indonesia (Default)
         langText.textContent = 'ID';
         langBtn.setAttribute('aria-label', 'Bahasa saat ini Indonesia. Klik untuk ganti ke Inggris');
     }
 
-    // Event Klik Tombol Bahasa
+    // B. Event Klik Tombol Bahasa (Manual Switch)
     langBtn.addEventListener('click', () => {
         if (langText.textContent.includes('ID')) {
-            // Mau ganti ke Inggris
-            setGoogleCookie('/id/en'); 
-            location.reload(); // Wajib reload agar cookie terbaca Google
+            setGoogleCookie('/id/en'); // Ganti ke Inggris
+            location.reload();
         } else {
-            // Mau ganti ke Indonesia
-            setGoogleCookie('/id/id'); 
+            setGoogleCookie('/id/id'); // Ganti ke Indonesia
             location.reload();
         }
     });
+
+    // C. AUTO DETECT LANGUAGE (Fitur Baru)
+    // Jika browser bukan bahasa Indonesia & belum ada cookie preferensi, paksa Inggris.
+    (function checkAutoLanguage() {
+        var userLang = navigator.language || navigator.userLanguage; 
+        
+        // Cek apakah bahasa browser TIDAK mengandung 'id' atau 'ind'
+        // Dan pastikan user belum pernah set bahasa (cookie kosong)
+        if (userLang.indexOf('id') === -1 && userLang.indexOf('ind') === -1 && !getCookie('googtrans')) {
+            console.log('Non-Indonesian browser detected (' + userLang + '). Switching to English.');
+            setGoogleCookie('/id/en');
+            location.reload();
+        }
+    })();
 
 });
 
@@ -91,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // =========================================
 // 3. GOOGLE TRANSLATE LOADER (EXTERNAL)
 // =========================================
-// Ini ditaruh di luar DOMContentLoaded agar langsung dieksekusi browser
+// Loader ditaruh di luar DOMContentLoaded agar dieksekusi secepat mungkin
 window.googleTranslateElementInit = function() {
     new google.translate.TranslateElement({
         pageLanguage: 'id',
@@ -104,7 +112,7 @@ window.googleTranslateElementInit = function() {
 (function loadGoogleScript() {
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    // Gunakan protokol https agar aman
+    // Gunakan HTTPS agar aman
     script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
     document.body.appendChild(script);
 })();
