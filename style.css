@@ -152,3 +152,87 @@ section { padding: 3rem 0; }
     .header-inner { flex-direction: column; text-align: center; }
     .hero h2 { font-size: 1.8rem; }
 }
+/* Styling Container */
+.access-tools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Styling Tombol Aksesibilitas */
+.access-btn {
+    background: transparent;
+    border: 2px solid var(--border-color); /* Batas tegas untuk High Contrast */
+    color: var(--text-heading);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.access-btn:hover {
+    background-color: var(--border-color);
+}
+
+/* FOKUS AKSESIBILITAS (Penting!) */
+.access-btn:focus-visible {
+    outline: 3px solid var(--accent-blue);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+/* Logika Ikon Dark Mode */
+.icon-sun { display: none; }
+.icon-moon { display: block; }
+
+/* Saat Dark Mode Aktif */
+[data-theme="dark"] .icon-sun { display: block; }
+[data-theme="dark"] .icon-moon { display: none; }
+[data-theme="dark"] .access-btn { 
+    border-color: #475569; 
+    color: #E2E8F0;
+}
+
+/* Styling Dropdown Bahasa (Google Translate) */
+.lang-wrapper {
+    position: relative;
+}
+
+.translate-dropdown {
+    display: none; /* Tersembunyi scr default */
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    padding: 10px;
+    border-radius: 8px;
+    z-index: 100;
+    min-width: 160px;
+}
+
+.translate-dropdown.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Membersihkan Tampilan Bawaan Google Translate yang Berantakan */
+.goog-te-gadget-simple {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+}
+.goog-te-gadget img { display: none !important; } /* Sembunyikan logo Google */
