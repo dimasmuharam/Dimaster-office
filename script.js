@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. LOGIKA DARK MODE ---
+    // --- 1. LOGIKA DARK MODE (Sama seperti sebelumnya) ---
     const themeBtn = document.getElementById('theme-toggle');
-    
-    // Cek preferensi tersimpan
     const currentTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -15,15 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     themeBtn.addEventListener('click', () => {
         const isDark = document.body.getAttribute('data-theme') === 'dark';
-        
         if (isDark) {
-            // Pindah ke Light
             document.body.setAttribute('data-theme', 'light');
             localStorage.setItem('theme', 'light');
             themeBtn.setAttribute('aria-pressed', 'false');
             themeBtn.setAttribute('aria-label', 'Ubah ke Mode Gelap');
         } else {
-            // Pindah ke Dark
             document.body.setAttribute('data-theme', 'dark');
             localStorage.setItem('theme', 'dark');
             themeBtn.setAttribute('aria-pressed', 'true');
@@ -31,44 +26,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 2. LOGIKA BAHASA (GOOGLE TRANSLATE) ---
+
+    // --- 2. LOGIKA BAHASA (TOGGLE ID <-> EN) ---
     const langBtn = document.getElementById('lang-toggle');
-    const langDropdown = document.getElementById('google_translate_element');
-
-    langBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Mencegah event bubbling
-        const isExpanded = langBtn.getAttribute('aria-expanded') === 'true';
-
-        // Toggle status
-        langBtn.setAttribute('aria-expanded', !isExpanded);
-        langDropdown.setAttribute('aria-hidden', isExpanded); // Kebalikan dari expanded
-        langDropdown.classList.toggle('active');
-
-        // Fokus manajemen: Jika dibuka, coba fokus ke elemen pertama di dalamnya
-        if (!isExpanded) {
-            setTimeout(() => {
-                // Mencoba mencari elemen select Google Translate (jika sudah ter-load)
-                const googleSelect = langDropdown.querySelector('select, div.goog-te-gadget-simple');
-                if (googleSelect) googleSelect.focus();
-            }, 100);
-        }
-    });
-
-    // Menutup dropdown jika klik di luar area
-    document.addEventListener('click', (e) => {
-        if (!langBtn.contains(e.target) && !langDropdown.contains(e.target)) {
-            langDropdown.classList.remove('active');
-            langBtn.setAttribute('aria-expanded', 'false');
-            langDropdown.setAttribute('aria-hidden', 'true');
-        }
-    });
     
-    // Menutup dropdown dengan tombol ESC (Syarat WCAG)
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && langDropdown.classList.contains('active')) {
-            langDropdown.classList.remove('active');
-            langBtn.setAttribute('aria-expanded', 'false');
-            langBtn.focus(); // Kembalikan fokus ke tombol pemicu
+    // Fungsi untuk mengubah nilai Google Translate
+    function triggerGoogleTranslate(langCode) {
+        // Cari elemen select tersembunyi milik Google
+        const googleSelect = document.querySelector('.goog-te-combo');
+        
+        if (googleSelect) {
+            googleSelect.value = langCode;
+            googleSelect.dispatchEvent(new Event('change')); // Trigger event change
+        }
+    }
+
+    // Cek status bahasa saat load (mendeteksi cookie Google)
+    function checkCurrentLanguage() {
+        const googleSelect = document.querySelector('.goog-te-combo');
+        if (googleSelect && googleSelect.value === 'en') {
+            document.body.setAttribute('data-lang', 'en');
+            langBtn.setAttribute('aria-label', 'Ganti ke Bahasa Indonesia');
+        } else {
+            document.body.setAttribute('data-lang', 'id');
+            langBtn.setAttribute('aria-label', 'Switch to English');
+        }
+    }
+
+    // Listener Tombol
+    langBtn.addEventListener('click', () => {
+        const currentLang = document.body.getAttribute('data-lang');
+        
+        if (currentLang === 'en') {
+            // Jika Inggris, ubah ke Indonesia
+            triggerGoogleTranslate('id'); // 'id' atau kosong '' untuk default
+            document.body.setAttribute('data-lang', 'id');
+            langBtn.setAttribute('aria-label', 'Switch to English');
+        } else {
+            // Jika Indonesia, ubah ke Inggris
+            triggerGoogleTranslate('en');
+            document.body.setAttribute('data-lang', 'en');
+            langBtn.setAttribute('aria-label', 'Ganti ke Bahasa Indonesia');
         }
     });
+
+    // Karena Google Translate load-nya agak lambat (async),
+    // kita perlu cek berulang kali di awal apakah widget sudah siap
+    const checkInterval = setInterval(() => {
+        const googleSelect = document.querySelector('.goog-te-combo');
+        if (googleSelect) {
+            checkCurrentLanguage();
+            // Tambahkan listener jika user mengubah bahasa lewat cara lain (opsional)
+            googleSelect.addEventListener('change', checkCurrentLanguage);
+            clearInterval(checkInterval); // Stop checking
+        }
+    }, 500); // Cek setiap 0.5 detik
 });
