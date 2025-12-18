@@ -1,188 +1,185 @@
-/* --- CSS VARIABLES (Theming) --- */
+/* ==========================================================================
+   PT DIMASTER EDUCATION BERPRESTASI - CORPORATE STYLESHEET
+   Theme: The Shield (Authority, Trust, Professional)
+   ========================================================================== */
+
+/* 1. CSS VARIABLES (STANDARDISASI NAMA AGAR KONSISTEN) */
 :root {
-    /* Light Mode (Default) - Warna Biru Korporat 'Dingin' */
-    --bg-body: #F8FAFC;
-    --bg-card: #FFFFFF;
-    --text-main: #334155;
-    --text-heading: #0F172A; /* Slate 900 */
-    --primary-blue: #1E3A8A; /* Biru Tua Resmi */
-    --accent-blue: #3B82F6;
-    --border-color: #E2E8F0;
+    /* --- LIGHT MODE (Corporate Default) --- */
+    /* Warna: Navy Blue & Emas Gelap */
+    --primary-color: #0f172a;    /* Navy Gelap (Slate 900) - Judul */
+    --accent-color: #b45309;     /* Amber/Emas Gelap - Link & Aksen */
+    --bg-color: #f8fafc;         /* Putih Kebiruan (Slate 50) */
+    --card-bg: #ffffff;          /* Putih Murni */
+    --text-color: #334155;       /* Abu Slate Tua - Teks Bacaan */
+    --border-color: #cbd5e1;     /* Garis Batas */
+    --header-bg: #ffffff;        /* Header Terang */
+    --header-text: #0f172a;
+    --hero-bg: #0f172a;          /* Hero Background Gelap */
+    --hero-text: #f8fafc;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Dark Mode Theme */
 [data-theme="dark"] {
-    --bg-body: #0F172A; /* Dark Navy */
-    --bg-card: #1E293B;
-    --text-main: #CBD5E1;
-    --text-heading: #F1F5F9;
-    --primary-blue: #60A5FA; /* Biru lebih terang untuk kontras */
-    --accent-blue: #3B82F6;
-    --border-color: #334155;
+    /* --- DARK MODE (Elegant Professional) --- */
+    /* Warna: Slate Gelap & Emas Terang */
+    --primary-color: #f1f5f9;    /* Putih Slate - Judul */
+    --accent-color: #fbbf24;     /* Amber/Emas Terang - Link */
+    --bg-color: #020617;         /* Hampir Hitam (Slate 950) */
+    --card-bg: #1e293b;          /* Slate 800 */
+    --text-color: #cbd5e1;       /* Slate 300 - Teks Bacaan */
+    --border-color: #334155;     /* Garis Batas */
+    --header-bg: #0f172a;        /* Header Gelap */
+    --header-text: #f1f5f9;
+    --hero-bg: #0f172a;
+    --hero-text: #e2e8f0;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 
-/* --- RESET & BASE --- */
+/* 2. RESET & BASE STYLES */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-body);
-    color: var(--text-main);
     line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    /* Fix posisi body agar tidak turun oleh topbar Google */
-    top: 0px !important; 
-    position: static !important;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+    top: 0 !important; /* Fix Google Translate Topbar */
 }
 
-:focus-visible {
-    outline: 3px solid var(--accent-blue);
-    outline-offset: 2px;
-}
-
+/* Skip Link (Accessibility) */
 .skip-link {
-    position: absolute; top: -40px; left: 0; background: var(--primary-blue); color: white; padding: 8px; z-index: 100;
-    transition: top 0.3s;
+    position: absolute; top: -40px; left: 0;
+    background: var(--accent-color); color: #fff; padding: 10px; z-index: 1000;
+    font-weight: bold; text-decoration: none; transition: top 0.3s;
 }
 .skip-link:focus { top: 0; }
+
+a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+a:hover { text-decoration: underline; }
+
+h1, h2, h3, h4 { color: var(--primary-color); margin-top: 0; }
 
 .container {
     max-width: 1000px; margin: 0 auto; padding: 0 20px;
 }
 
-/* --- HEADER --- */
+/* 3. HEADER & NAVIGASI */
 .site-header {
-    background-color: var(--bg-card);
-    border-bottom: 1px solid var(--border-color);
+    background: var(--header-bg);
+    color: var(--header-text);
     padding: 1rem 0;
-    position: sticky; top: 0; z-index: 10;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky; top: 0; z-index: 100;
 }
 
 .header-inner {
     display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
 }
 
-.logo-area {
-    display: flex; align-items: center; gap: 15px;
-}
-
-.logo-img { object-fit: contain; }
+.logo-area { display: flex; align-items: center; gap: 15px; }
+.logo-img { width: 50px; height: auto; }
 
 .company-name h1 {
-    font-size: 1.25rem; font-weight: 700; color: var(--text-heading);
+    font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--header-text); margin: 0;
 }
-
 .tagline {
-    font-size: 0.85rem; color: var(--text-main); display: block;
+    font-size: 0.8rem; color: var(--accent-color); font-style: italic; display: block;
 }
 
-/* --- HERO & SECTIONS --- */
+/* 4. TOMBOL AKSESIBILITAS (SINKRON DENGAN SCRIPT.JS) */
+.access-tools { display: flex; gap: 10px; align-items: center; }
+
+#theme-toggle, #lang-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--header-text);
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    min-width: 44px; /* Touch target size */
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+#theme-toggle:hover, #lang-toggle:hover {
+    background: var(--accent-color);
+    color: #fff; /* Teks putih saat hover */
+    border-color: var(--accent-color);
+}
+
+/* 5. HERO SECTION */
 .hero {
-    padding: 4rem 0; text-align: center;
-    background: linear-gradient(to bottom, var(--bg-card), var(--bg-body));
+    background: var(--hero-bg);
+    color: var(--hero-text);
+    padding: 4rem 0;
+    text-align: center;
 }
+.hero h2 { color: var(--hero-text); font-size: 2.2rem; margin-bottom: 1rem; }
+.hero .lead { font-size: 1.1rem; max-width: 700px; margin: 0 auto; opacity: 0.9; }
 
-.hero h2 {
-    font-size: 2.5rem; color: var(--text-heading); margin-bottom: 1rem;
+/* 6. CONTENT SECTIONS */
+.section-official, .section-ecosystem, .section-contact {
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .section-title {
-    font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 2rem;
-    border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; display: inline-block;
+    font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--accent-color); margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color); display: inline-block; padding-bottom: 5px;
 }
 
-section { padding: 3rem 0; }
+.legal-box {
+    font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem;
+}
 
-/* --- CARDS (ECOSYSTEM) --- */
+/* 7. CARDS & GRID */
 .grid-cards {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;
 }
 
 .card {
-    background-color: var(--bg-card); border: 1px solid var(--border-color);
-    border-radius: 8px; padding: 2rem; transition: transform 0.2s;
+    background: var(--card-bg);
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
     box-shadow: var(--shadow);
+    transition: transform 0.2s;
 }
-.card:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
+.card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
 
-.card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; }
-.card h4 { font-size: 1.25rem; color: var(--text-heading); }
+.card-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;
+}
+.card h4 { margin: 0; font-size: 1.1rem; }
+
 .badge {
-    font-size: 0.75rem; background: var(--primary-blue); color: white;
-    padding: 2px 8px; border-radius: 4px;
+    font-size: 0.7rem; background: var(--primary-color); color: var(--bg-color);
+    padding: 2px 8px; border-radius: 10px; text-transform: uppercase;
 }
+
 .card-link {
-    display: inline-block; margin-top: 1rem; color: var(--accent-blue);
-    font-weight: 600; text-decoration: none;
+    display: inline-block; margin-top: 1rem; color: var(--accent-color);
 }
-.card-link:hover { text-decoration: underline; }
 
-/* --- FOOTER --- */
+/* 8. FOOTER */
 .site-footer {
-    background-color: var(--bg-card); border-top: 1px solid var(--border-color);
-    padding: 2rem 0; text-align: center; font-size: 0.9rem; margin-top: 3rem;
+    background: #0f172a; /* Selalu Gelap */
+    color: #94a3b8;
+    text-align: center;
+    padding: 3rem 0;
+    margin-top: auto;
 }
+.small-text { font-size: 0.9rem; margin-top: 5px; }
 
-@media (max-width: 600px) {
-    .header-inner { flex-direction: column; text-align: center; }
-    .hero h2 { font-size: 1.8rem; }
-}
-
-/* --- ACCESSIBILITY TOOLS (NAVBAR) --- */
-.access-tools {
-    display: flex; align-items: center; gap: 10px;
-}
-
-.access-btn {
-    background: transparent;
-    border: 2px solid var(--border-color); 
-    color: var(--text-heading);
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: inline-flex; align-items: center; justify-content: center;
-    gap: 8px;
-    font-weight: 600; font-size: 0.9rem;
-    transition: all 0.2s ease;
-    min-width: 44px; /* Minimum touch target size */
-}
-
-.access-btn:hover {
-    background-color: var(--border-color);
-    color: var(--primary-blue);
-}
-
-.access-btn:focus-visible {
-    outline: 3px solid var(--accent-blue);
-    outline-offset: 3px;
-}
-
-/* Dark Mode Icons */
-.icon-sun { display: none; }
-.icon-moon { display: block; }
-[data-theme="dark"] .icon-sun { display: block; }
-[data-theme="dark"] .icon-moon { display: none; }
-[data-theme="dark"] .access-btn { border-color: #475569; color: #E2E8F0; }
-
-/* --- GOOGLE TRANSLATE HIDING (ADAPTASI DARI CONTOH) --- */
-
-/* 1. Sembunyikan elemen dropdown Google */
-#google_translate_element {
-    display: none !important;
-}
-
-/* 2. Sembunyikan Top Bar Google yang mengganggu */
+/* 9. UTILITIES (Google Translate Hider) */
+.visually-hidden { display: none !important; }
 .goog-te-banner-frame { display: none !important; }
-.goog-te-banner-frame.skiptranslate { display: none !important; }
-body { top: 0px !important; }
-
-/* 3. Sembunyikan tooltip Google saat hover text */
-#goog-gt-tt { display: none !important; }
-
-/* 4. Mencegah font berubah aneh/background highlight */
-font {
-    background-color: transparent !important;
-    box-shadow: none !important;
-}
+body { top: 0 !important; }
